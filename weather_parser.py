@@ -19,3 +19,10 @@ for file_name in glob.glob("html_files/*.html"):
 	weather_rows = weather_tbody.find_all("tr")
 weather_time= weather_rows[0].find("td",{"class":"twc-sticky-col "}).find("div",{"class":"hourly-time"}).find("span",{"class":"dsx-date"}).text
 print(weather_time)
+weather_condition=weather_rows[0].find("td",{"class":"hidden-cell-sm description"}).find("span").text
+print(weather_condition)
+weather_feels=weather_rows[0].find("td",{"class":"feels"}).find("span").text
+print(weather_feels)
+weather_precip=weather_rows[0].find("td",{"class":"precip"}).find("span",{"class":""}).find("span").text
+
+print(weather_precip)
