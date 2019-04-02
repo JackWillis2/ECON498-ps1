@@ -1,0 +1,16 @@
+,time_backstep,weather_condition,weather_date,weather_feels,weather_humid,weather_precip,weather_time,weather_wind
+0,1.0,Sunny,Tue,45°,32%,0%,12:00 pm,ENE 9 mph 
+1,2.0,Mostly Sunny,Tue,48°,30%,0%,1:00 pm,ENE 8 mph 
+2,3.0,Partly Cloudy,Tue,51°,29%,0%,2:00 pm,ENE 7 mph 
+3,4.0,Partly Cloudy,Tue,53°,30%,0%,3:00 pm,ENE 5 mph 
+4,5.0,Partly Cloudy,Tue,54°,29%,0%,4:00 pm,ENE 5 mph 
+5,6.0,Partly Cloudy,Tue,55°,29%,0%,5:00 pm,ENE 4 mph 
+6,7.0,Sunny,Tue,54°,29%,0%,6:00 pm,ENE 5 mph 
+7,8.0,Sunny,Tue,52°,31%,0%,7:00 pm,ENE 3 mph 
+8,9.0,Clear,Tue,50°,36%,0%,8:00 pm,ENE 2 mph 
+9,10.0,Clear,Tue,48°,40%,0%,9:00 pm,ENE 2 mph 
+10,11.0,Clear,Tue,46°,45%,0%,10:00 pm,ENE 2 mph 
+11,12.0,Clear,Tue,44°,49%,0%,11:00 pm,NE 2 mph 
+12,13.0,Clear,Wed,43°,51%,0%,12:00 am,NNE 2 mph 
+13,14.0,Clear,Wed,42°,54%,0%,1:00 am,NNE 2 mph 
+14,15.0,Clear,Wed,41°,59%,0%,2:00 am,NNE 2 mph 
