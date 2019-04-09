@@ -40,6 +40,10 @@ for file_name in glob.glob("html_files/*.html"):
 			'weather_wind': weather_wind,
 			'time_backstep':time_away
 			}, ignore_index=True)
+df.weather_feels=df.weather_feels.str.strip('Â°')
+df.weather_humid=df.weather_humid.str.strip('%')
+df.weather_precip=df.weather_precip.str.strip('%')
+df.weather_wind=df.weather_wind.str.extract('(\d+)')
 print(df)
 df.to_csv("parsed_files/weatherchanneldata.csv")
 	
