@@ -34,6 +34,7 @@ for file_name in glob.glob("html_files/*.html"):
 			'weather_time': weather_time, 
 			'weather_date': weather_date,
 			'weather_condition': weather_condition,
+			'weather_temp': weather_temp,
 			'weather_feels': weather_feels,
 			'weather_precip': weather_precip,
 			'weather_humid': weather_humid,
@@ -41,9 +42,12 @@ for file_name in glob.glob("html_files/*.html"):
 			'time_backstep':time_away
 			}, ignore_index=True)
 df.weather_feels=df.weather_feels.str.strip('Â°')
+df.weather_temp=df.weather_temp.str.strip('Â°')
 df.weather_humid=df.weather_humid.str.strip('%')
 df.weather_precip=df.weather_precip.str.strip('%')
 df.weather_wind=df.weather_wind.str.extract('(\d+)')
+
+
 print(df)
 df.to_csv("parsed_files/weatherchanneldata.csv")
 	
