@@ -39,26 +39,28 @@ def daytime_or_night(x):
 		if (hours<7) or (hours==12):
 			ret=1
 	return ret
+df2=pd.DataFrame()
+for i in range(1,16):
+    actual_weather=df[df.time_backstep==i]
+    print(actual_weather)
+    actual_weather["weather_humid_1period_diff"]=actual_weather.weather_humid.diff(periods=1)
+    actual_weather["weather_humid_2period_diff"]=actual_weather.weather_humid.diff(periods=2)
+    actual_weather["weather_temp_1period_diff"]=actual_weather.weather_temp.diff(periods=1)
+    actual_weather["weather_temp_2period_diff"]=actual_weather.weather_temp.diff(periods=2)
+    actual_weather.fillna(value=0,inplace=True)
+    actual_weather = actual_weather.iloc[2:]
 
+    actual_weather['if_daytime']=actual_weather.weather_time.apply(daytime_or_night)
+    actual_weather['if_raining']=actual_weather.weather_condition.apply(create_dummies)
 
-actual_weather=df[df.time_backstep==1]
-actual_weather["weather_humid_1period_diff"]=actual_weather.weather_humid.diff(periods=1)
-actual_weather["weather_humid_2period_diff"]=actual_weather.weather_humid.diff(periods=2)
-actual_weather["weather_temp_1period_diff"]=actual_weather.weather_temp.diff(periods=1)
-actual_weather["weather_temp_2period_diff"]=actual_weather.weather_temp.diff(periods=2)
-actual_weather.fillna(value=0,inplace=True)
-actual_weather = actual_weather.iloc[2:]
-
-actual_weather['if_daytime']=actual_weather.weather_time.apply(daytime_or_night)
-actual_weather['if_raining']=actual_weather.weather_condition.apply(create_dummies)
-
-actual_weather['weather_feels']=actual_weather['weather_feels']-actual_weather['weather_temp']
-
-actual_weather.drop(['weather_precip'], 1, inplace=True)
-actual_weather.drop(['weather_time'], 1, inplace=True)
-actual_weather.drop(['weather_date'], 1, inplace=True)
-actual_weather.drop(['weather_condition'], 1, inplace=True)
-actual_weather.drop(['time_backstep'], 1, inplace=True)
-actual_weather.drop(['Unnamed: 0'], 1, inplace=True)
-actual_weather.to_csv("parsed_files/actual_weather.csv")
+    actual_weather['weather_feels']=actual_weather['weather_feels']-actual_weather['weather_temp']
+    actual_weather=actual_weather.reset_index(drop=True)
+    actual_weather.drop(['weather_precip'], 1, inplace=True)
+    actual_weather.drop(['weather_time'], 1, inplace=True)
+    actual_weather.drop(['weather_date'], 1, inplace=True)
+    actual_weather.drop(['weather_condition'], 1, inplace=True)
+    actual_weather.drop(['Unnamed: 0'], 1, inplace=True)
+    df2 = df2.append(actual_weather, ignore_index=True)
+print(df2)
+#actual_weather.to_csv("parsed_files/actual_weather.csv")
 

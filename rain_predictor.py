@@ -3,11 +3,13 @@ import glob
 import pandas as pd
 import csv
 from sklearn.covariance import EmpiricalCovariance
-from sklearn.linear_model import RidgeClassifier
+from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
 from sklearn.model_selection import KFold
+from sklearn.model_selection import train_test_split
+from matplotlib import pyplot as plt
 
 df1=pd.read_csv("./parsed_files/actual_weather.csv")
 
@@ -27,19 +29,41 @@ def correlation_matrix(df):
     # Add colorbar, make sure to specify tick locations to match desired ticklabels
     fig.colorbar(cax, ticks=[.75,.8,.85,.90,.95,1])
     plt.show()
-
+    plt.close()
 correlation_matrix(df1)
-print(df1.groupby('if_raining').mean())
+#print(df1.groupby('if_raining').mean())
+df1 = df1.sample(frac=1).reset_index(drop=True)
+data = df1.iloc[:,1:9].values
+target = df1.iloc[:,10].values
 
-data = dataset.iloc[:,2:10]
+data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 0)
 
-print(data.head())
+print(data.shape)
+print(target.shape)
+print(data_training.shape)
+print(data_test.shape)
+print(target_training.shape)
+print(target_test.shape)
 
-target = dataset.iloc[:,11].values
+
+logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
+randforest = RandomForestClassifier(n_estimators=100, max_depth=3,random_state=0)
+linearsupportvector = LinearSVC(random_state=0, tol=1e-5)
+
+logreg.fit(data_training,target_training)
+randforest.fit(data_training,target_training)
+linearsupportvector.fit(data_training,target_training)
+prediction_log = logreg.predict(data_test)
+prediction_randforest=randforest.predict(data_test)
+prediction_linearsupportvector=linearsupportvector.predict(data_test)
+
+print(metrics.r2_score(target_test,prediction_log))
+print(metrics.r2_score(target_test,prediction_randforest))
+print(metrics.r2_score(target_test,prediction_linearsupportvector))
 
 kfold_machine = KFold(n_splits = 4)
 kfold_machine.get_n_splits(data)
-for training_index, test_index in kfold_machine.split(df1):
+for training_index, test_index in kfold_machine.split(data):
     print("Training: ", training_index)
     print("Test: ", test_index)
     data_training, data_test = data[training_index], data[test_index]
