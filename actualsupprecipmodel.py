@@ -48,8 +48,9 @@ actual_weather["weather_temp_1period_diff"]=actual_weather.weather_temp.diff(per
 actual_weather["weather_temp_2period_diff"]=actual_weather.weather_temp.diff(periods=2)
 actual_weather.fillna(value=0,inplace=True)
 actual_weather = actual_weather.iloc[2:]
-actual_weather['if_raining']=actual_weather.weather_condition.apply(create_dummies)
+
 actual_weather['if_daytime']=actual_weather.weather_time.apply(daytime_or_night)
+actual_weather['if_raining']=actual_weather.weather_condition.apply(create_dummies)
 
 actual_weather['weather_feels']=actual_weather['weather_feels']-actual_weather['weather_temp']
 
