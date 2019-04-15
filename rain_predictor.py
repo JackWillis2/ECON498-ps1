@@ -3,17 +3,20 @@ import glob
 import pandas as pd
 import csv
 import numpy as np
+from sklearn.manifold import Isomap
+from mlxtend.plotting import plot_decision_regions
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.svm import LinearSVC, SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import Normalizer
 from sklearn import metrics
-
+import matplotlib.gridspec as gridspec
 from sklearn.model_selection import KFold, train_test_split, GridSearchCV
 from matplotlib import pyplot as plt
-
+import itertools
 df1=pd.read_csv("./parsed_files/actual_weather.csv")
+df1=df1.sample(frac=1).reset_index(drop=True)
 
 def correlation_matrix(df):
     from matplotlib import pyplot as plt
@@ -42,13 +45,20 @@ def svc_param_selection(X, y, nfolds):
     grid_search.best_params_
     return grid_search.best_params_
 
+
 correlation_matrix(df1)
 #print(df1.groupby('if_raining').mean())
 data = df1.iloc[:,2:14].values
 
-target = df1.iloc[:,15]
+embedding = Isomap(n_components=3)
+X_transformed = embedding.fit_transform(data)
 
-data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 46)
+target = df1.iloc[:,15]
+catenc = pd.factorize(target)
+target = catenc[0]
+
+print(target)
+data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 25)
 
 print(data.shape)
 print(target.shape)
@@ -64,6 +74,7 @@ logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
 #this is tuned
 randforest = RandomForestClassifier(n_estimators=600, max_depth=15, random_state=0, min_samples_leaf=1)
 
+#this is also tuned
 linearsupportvector=SVC(C=10,gamma=0.001)
 
 logreg.fit(data_training,target_training)
@@ -73,24 +84,25 @@ print(randforest.feature_importances_)
 prediction_log = logreg.predict(data_test)
 prediction_randforest=randforest.predict(data_test)
 prediction_linearsupportvector=linearsupportvector.predict(data_test)
-print(logreg.score(data_test, target_test))
-print(randforest.score(data_test, target_test))
-print(linearsupportvector.score(data_test, target_test))
+print("LogisticRegression:",logreg.score(data_test, target_test),)
+print("Random Forest:",randforest.score(data_test, target_test))
+print("SVM:",linearsupportvector.score(data_test, target_test))
+
 
 
 kfold_machine = KFold(n_splits = 4)
 kfold_machine.get_n_splits(data)
-#for training_index, test_index in kfold_machine.split(data):
+for training_index, test_index in kfold_machine.split(data):
     #print("Training: ", training_index)
     #print("Test: ", test_index)
-    #data_training, data_test = data[training_index], data[test_index]
-    #target_training, target_test = target[training_index], target[test_index]
-    #logreg.fit(data_training,target_training)
-    #randforest.fit(data_training,target_training)
-    #linearsupportvector.fit(data_training,target_training)
-    #prediction_log = logreg.predict(data_test)
-    #prediction_randforest=randforest.predict(data_test)
-    #prediction_linearsupportvector=linearsupportvector.predict(data_test)
-    #print(logreg.score(data_test, target_test))
-    #print(randforest.score(data_test, target_test))
-    #print(linearsupportvector.score(data_test, target_test))
+    data_training, data_test = data[training_index], data[test_index]
+    target_training, target_test = target[training_index], target[test_index]
+    logreg.fit(data_training,target_training)
+    randforest.fit(data_training,target_training)
+    linearsupportvector.fit(data_training,target_training)
+    prediction_log = logreg.predict(data_test)
+    prediction_randforest=randforest.predict(data_test)
+    prediction_linearsupportvector=linearsupportvector.predict(data_test)
+    print("LogisticRegression:",logreg.score(data_test, target_test),)
+    print("Random Forest:",randforest.score(data_test, target_test))
+    print("SVM:",linearsupportvector.score(data_test, target_test))
