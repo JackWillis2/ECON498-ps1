@@ -7,7 +7,7 @@ import numpy
 if not  os.path.exists("html_files"):
 	os.mkdir("html_files")
 
-for i in range(120):
+for i in range(168):
 	current_time_step=datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d%H%M%S')
 	response = urllib.request.urlopen("https://weather.com/weather/hourbyhour/l/29634:4:US")
 	html = response.read()
