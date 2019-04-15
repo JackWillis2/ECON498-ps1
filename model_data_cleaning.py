@@ -51,16 +51,15 @@ for i in range(1,16):
     actual_weather = actual_weather.iloc[2:]
 
     actual_weather['if_daytime']=actual_weather.weather_time.apply(daytime_or_night)
-    actual_weather['if_raining']=actual_weather.weather_condition.apply(create_dummies)
+    actual_weather['if_raining']=actual_weather.weather_condition
 
     actual_weather['weather_feels']=actual_weather['weather_feels']-actual_weather['weather_temp']
     actual_weather=actual_weather.reset_index(drop=True)
-    actual_weather.drop(['weather_precip'], 1, inplace=True)
     actual_weather.drop(['weather_time'], 1, inplace=True)
     actual_weather.drop(['weather_date'], 1, inplace=True)
     actual_weather.drop(['weather_condition'], 1, inplace=True)
     actual_weather.drop(['Unnamed: 0'], 1, inplace=True)
     df2 = df2.append(actual_weather, ignore_index=True)
 print(df2)
-#actual_weather.to_csv("parsed_files/actual_weather.csv")
+df2.to_csv("parsed_files/actual_weather.csv")
 
