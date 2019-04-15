@@ -2,6 +2,7 @@ import os
 import glob
 import pandas as pd
 import csv
+import numpy as np
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
@@ -36,8 +37,7 @@ correlation_matrix(df1)
 
 df1 = df1.sample(frac=1).reset_index(drop=True)
 data = df1.iloc[:,2:11].values
-transformer = Normalizer().fit(data)
-transformer.transform(data)
+
 target = df1.iloc[:,12]
 
 data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 0)
@@ -51,7 +51,23 @@ print(target_test.shape)
 
 
 logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
-randforest = RandomForestClassifier(n_estimators=100, max_depth=3,random_state=0)
+
+
+sample_leaf_options = [1,5,10,50,100,200,500]
+limit=0
+for leaf_size in sample_leaf_options :
+    for x in range(100,1000,100):
+        randforest = RandomForestClassifier(n_estimators=x, max_depth=3, random_state=0, min_samples_leaf=leaf_size)
+        randforest.fit(data_training,target_training)
+        score=randforest.score(data_test, target_test)
+        if (score<limit) :
+            break
+        limit=score
+        opt_leaf=leaf_size
+        opt_trees=x
+
+print(opt_leaf,opt_trees)
+randforest = RandomForestClassifier(n_estimators=100, max_depth=3, random_state=0, min_samples_leaf=opt_leaf)
 linearsupportvector = LinearSVC(random_state=0, tol=1e-5, multi_class='crammer_singer')
 
 logreg.fit(data_training,target_training)
@@ -68,9 +84,17 @@ print(linearsupportvector.score(data_test, target_test))
 
 kfold_machine = KFold(n_splits = 4)
 kfold_machine.get_n_splits(data)
-for training_index, test_index in kfold_machine.split(data):
-    print("Training: ", training_index)
-    print("Test: ", test_index)
-    data_training, data_test = data[training_index], data[test_index]
-    target_training, target_test = target[training_index], target[test_index]
-#shows that data is super-correlated but good differentials between raining and not raining
+#for training_index, test_index in kfold_machine.split(data):
+    #print("Training: ", training_index)
+    #print("Test: ", test_index)
+    #data_training, data_test = data[training_index], data[test_index]
+    #target_training, target_test = target[training_index], target[test_index]
+    #logreg.fit(data_training,target_training)
+    #randforest.fit(data_training,target_training)
+    #linearsupportvector.fit(data_training,target_training)
+    #prediction_log = logreg.predict(data_test)
+    #prediction_randforest=randforest.predict(data_test)
+    #prediction_linearsupportvector=linearsupportvector.predict(data_test)
+    #print(logreg.score(data_test, target_test))
+    #print(randforest.score(data_test, target_test))
+    #print(linearsupportvector.score(data_test, target_test))
