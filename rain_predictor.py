@@ -4,13 +4,13 @@ import pandas as pd
 import csv
 import numpy as np
 from sklearn.covariance import EmpiricalCovariance
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import Normalizer
 from sklearn import metrics
-from sklearn.model_selection import KFold
-from sklearn.model_selection import train_test_split
+
+from sklearn.model_selection import KFold, train_test_split, GridSearchCV
 from matplotlib import pyplot as plt
 
 df1=pd.read_csv("./parsed_files/actual_weather.csv")
@@ -32,6 +32,16 @@ def correlation_matrix(df):
     fig.colorbar(cax, ticks=[.75,.8,.85,.90,.95,1])
     #plt.show()
     #plt.close()
+
+def svc_param_selection(X, y, nfolds):
+    Cs = [0.001, 0.01, 0.1, 1, 10]
+    gammas = [0.001, 0.01, 0.1, 1]
+    param_grid = {'C': Cs, 'gamma' : gammas}
+    grid_search = GridSearchCV(SVC(kernel='rbf'), param_grid, cv=nfolds)
+    grid_search.fit(X, y)
+    grid_search.best_params_
+    return grid_search.best_params_
+
 correlation_matrix(df1)
 #print(df1.groupby('if_raining').mean())
 data = df1.iloc[:,2:14].values
@@ -51,10 +61,10 @@ print(target_test.shape)
 logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
 
 
-
+#this is tuned
 randforest = RandomForestClassifier(n_estimators=600, max_depth=15, random_state=0, min_samples_leaf=1)
 
-linearsupportvector = LinearSVC(random_state=0, tol=1e-5, multi_class='crammer_singer')
+linearsupportvector=SVC(C=10,gamma=0.001)
 
 logreg.fit(data_training,target_training)
 randforest.fit(data_training,target_training)
