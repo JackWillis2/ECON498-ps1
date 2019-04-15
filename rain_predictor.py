@@ -51,7 +51,9 @@ print(target_test.shape)
 logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
 
 
-randforest = RandomForestClassifier(n_estimators=400, max_depth=3, random_state=0, min_samples_leaf=1)
+
+randforest = RandomForestClassifier(n_estimators=600, max_depth=15, random_state=0, min_samples_leaf=1)
+
 linearsupportvector = LinearSVC(random_state=0, tol=1e-5, multi_class='crammer_singer')
 
 logreg.fit(data_training,target_training)
