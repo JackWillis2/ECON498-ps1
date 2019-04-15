@@ -40,7 +40,6 @@ def daytime_or_night(x):
 df2=pd.DataFrame()
 for i in range(1,16):
 	actual_weather=df[df.time_backstep==i]
-	print(actual_weather)
 	#actual_weather["weather_humid_1period_diff"]=actual_weather.weather_precip.diff(periods=1)
 	#actual_weather["weather_humid_2period_diff"]=actual_weather.weather_precip.diff(periods=2)
 	actual_weather["weather_temp_1period_diff"]=actual_weather.weather_temp.diff(periods=1)
@@ -50,8 +49,10 @@ for i in range(1,16):
 	actual_weather.fillna(value=0,inplace=True)
 	actual_weather = actual_weather.iloc[2:]
 	actual_weather["weather_time"]=actual_weather.weather_time.apply(daytime_or_night)
+	actual_weather['temp_diff_from_mean']=actual_weather['weather_temp'].sub(df.groupby('weather_time')['weather_temp'].transform('mean'))
+	actual_weather['humid_diff_from_mean']=actual_weather['weather_humid'].sub(df.groupby('weather_time')['weather_humid'].transform('mean'))
+	actual_weather['wind_diff_from_mean']=actual_weather['weather_humid'].sub(df.groupby('weather_time')['weather_wind'].transform('mean'))
 	actual_weather['if_raining']=actual_weather.weather_condition
-
 	actual_weather=actual_weather.reset_index(drop=True)
 	actual_weather.drop(['weather_date'], 1, inplace=True)
 	actual_weather.drop(['weather_condition'], 1, inplace=True)

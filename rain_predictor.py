@@ -34,13 +34,11 @@ def correlation_matrix(df):
     #plt.close()
 correlation_matrix(df1)
 #print(df1.groupby('if_raining').mean())
+data = df1.iloc[:,2:14].values
 
-df1 = df1.sample(frac=1).reset_index(drop=True)
-data = df1.iloc[:,2:11].values
+target = df1.iloc[:,15]
 
-target = df1.iloc[:,12]
-
-data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 0)
+data_training, data_test, target_training, target_test = train_test_split(data, target, test_size = 0.25, random_state = 46)
 
 print(data.shape)
 print(target.shape)
@@ -53,21 +51,7 @@ print(target_test.shape)
 logreg = LogisticRegression(C=1e5, solver='lbfgs', multi_class='multinomial')
 
 
-sample_leaf_options = [1,5,10,50,100,200,500]
-limit=0
-for leaf_size in sample_leaf_options :
-    for x in range(100,1000,100):
-        randforest = RandomForestClassifier(n_estimators=x, max_depth=3, random_state=0, min_samples_leaf=leaf_size)
-        randforest.fit(data_training,target_training)
-        score=randforest.score(data_test, target_test)
-        if (score<limit) :
-            break
-        limit=score
-        opt_leaf=leaf_size
-        opt_trees=x
-
-print(opt_leaf,opt_trees)
-randforest = RandomForestClassifier(n_estimators=100, max_depth=3, random_state=0, min_samples_leaf=opt_leaf)
+randforest = RandomForestClassifier(n_estimators=400, max_depth=3, random_state=0, min_samples_leaf=1)
 linearsupportvector = LinearSVC(random_state=0, tol=1e-5, multi_class='crammer_singer')
 
 logreg.fit(data_training,target_training)
